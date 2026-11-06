@@ -1,105 +1,105 @@
 [
   {
-    "objectID": "Presentations/DrugCohorts/index.html#introduction",
-    "href": "Presentations/DrugCohorts/index.html#introduction",
+    "objectID": "Presentations/DrugCohorts/slides.html#introduction",
+    "href": "Presentations/DrugCohorts/slides.html#introduction",
     "title": "Building drug cohorts in R",
     "section": "Introduction",
     "text": "Introduction\n\nCreating cohorts from scratch using R. Workflow overview:\n\n\n\n1. Drug codelists\nCreating codelists\n\n↓\nCodelistGenerator\n\n\n→\n\n2. Drug cohorts\nCodelists + cohort logic\n\n↓\nCohortConstructor\n\n\n→\n\n3. Diagnostics\nReviewing codelists and cohorts\n\n↓\nPhenotypeR"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#what-cohorts-are-we-going-to-create",
-    "href": "Presentations/DrugCohorts/index.html#what-cohorts-are-we-going-to-create",
+    "objectID": "Presentations/DrugCohorts/slides.html#what-cohorts-are-we-going-to-create",
+    "href": "Presentations/DrugCohorts/slides.html#what-cohorts-are-we-going-to-create",
     "title": "Building drug cohorts in R",
     "section": "What cohorts are we going to create?",
     "text": "What cohorts are we going to create?\n\n\n\nAmoxicillin\n\nDrug ingredient of amoxicillin and descendants\nCollapse gaps less or equal to a week\nFirst ever exposure\nRequire to be adults (≥ 18 years)\n\n\n\n\nAmoxicillin oral route\n\nDrug ingredient of amoxicillin and descendants but only with oral route\nCollapse gaps less or equal to a week\nFirst ever exposure\nRequire to be adults (≥ 18 years)\n\n\n\n\nAmoxicillin + clavulanate combination oral route\n\nDrug ingredient of amoxicillin and descendants but only with oral route\nCollapse gaps less or equal to a week\nFirst ever exposure\nRequire to be adults (≥ 18 years)"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#create-cdm-reference",
-    "href": "Presentations/DrugCohorts/index.html#create-cdm-reference",
+    "objectID": "Presentations/DrugCohorts/slides.html#create-cdm-reference",
+    "href": "Presentations/DrugCohorts/slides.html#create-cdm-reference",
     "title": "Building drug cohorts in R",
     "section": "Create CDM reference",
     "text": "Create CDM reference\n\nLoad relevant packages\n\n\n\nlibrary(omopgenerics)\nlibrary(omock)\nlibrary(CodelistGenerator)\nlibrary(CohortConstructor)\nlibrary(CohortCharacteristics)\nlibrary(PhenotypeR)\nlibrary(here)\nlibrary(duckdb)\nlibrary(visOmopResults)\nlibrary(gt)\nlibrary(purrr)\nlibrary(dplyr)\n\n\nCreate a cdm reference to a synthetic omop database\n\n\n\n\ncdm &lt;- omock::mockCdmFromDataset(\"delphi-100k\",\n                                 source = \"duckdb\")"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#create-cdm-reference-1",
-    "href": "Presentations/DrugCohorts/index.html#create-cdm-reference-1",
+    "objectID": "Presentations/DrugCohorts/slides.html#create-cdm-reference-1",
+    "href": "Presentations/DrugCohorts/slides.html#create-cdm-reference-1",
     "title": "Building drug cohorts in R",
     "section": "Create CDM reference",
-    "text": "Create CDM reference\n\nThe cdm object provides a reference to the tables in our data source.\nWe can access individual tables using $. For example, to access the OMOP concept table:\n\ncdm$concept\n\n# A query:  ?? x 10\n# Database: DuckDB 1.5.6 [root@Darwin 25.6.0:R 4.4.3//private/var/folders/sw/rd8zn92n2nz45cfcc5dcs_080000gr/T/RtmpfmVFPj/file12d0c718bdd90.duckdb]\n   concept_id concept_name              domain_id vocabulary_id concept_class_id\n        &lt;int&gt; &lt;chr&gt;                     &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt;           \n 1   44565804 OCTINOXATE / OXYBENZONE … Drug      DPD           Branded Drug Fo…\n 2   44675452 OCTINOXATE / OXYBENZONE … Drug      DPD           Branded Drug Fo…\n 3   44675453 OCTINOXATE / OXYBENZONE … Drug      DPD           Branded Drug Fo…\n 4   44666854 OCTINOXATE 7% / OXYBENZO… Drug      DPD           Clinical Drug   \n 5   44633022 OCTINOXATE 3.75% / OXYBE… Drug      DPD           Clinical Drug   \n 6   44658398 OCTINOXATE 6% / OXYBENZO… Drug      DPD           Clinical Drug   \n 7   44557377 2-PHENYLBENZIMIDAZOLE-5-… Drug      DPD           Clinical Drug   \n 8   44633023 AVOBENZONE 1% / OCTINOXA… Drug      DPD           Branded Drug Co…\n 9   44574224 AVOBENZONE 2.5% / OCTINO… Drug      DPD           Branded Drug Co…\n10   44658399 OCTINOXATE / OXYBENZONE … Drug      DPD           Clinical Drug F…\n# ℹ more rows\n# ℹ 5 more variables: standard_concept &lt;chr&gt;, concept_code &lt;chr&gt;,\n#   valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;, invalid_reason &lt;chr&gt;"
+    "text": "Create CDM reference\n\nThe cdm object provides a reference to the tables in our data source.\nWe can access individual tables using $. For example, to access the OMOP concept table:\n\ncdm$concept\n\n# A query:  ?? x 10\n# Database: DuckDB 1.5.6 [root@Darwin 25.6.0:R 4.4.3//private/var/folders/sw/rd8zn92n2nz45cfcc5dcs_080000gr/T/RtmpFu7qsD/file45a020e5a26c.duckdb]\n   concept_id concept_name              domain_id vocabulary_id concept_class_id\n        &lt;int&gt; &lt;chr&gt;                     &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt;           \n 1   44565804 OCTINOXATE / OXYBENZONE … Drug      DPD           Branded Drug Fo…\n 2   44675452 OCTINOXATE / OXYBENZONE … Drug      DPD           Branded Drug Fo…\n 3   44675453 OCTINOXATE / OXYBENZONE … Drug      DPD           Branded Drug Fo…\n 4   44666854 OCTINOXATE 7% / OXYBENZO… Drug      DPD           Clinical Drug   \n 5   44633022 OCTINOXATE 3.75% / OXYBE… Drug      DPD           Clinical Drug   \n 6   44658398 OCTINOXATE 6% / OXYBENZO… Drug      DPD           Clinical Drug   \n 7   44557377 2-PHENYLBENZIMIDAZOLE-5-… Drug      DPD           Clinical Drug   \n 8   44633023 AVOBENZONE 1% / OCTINOXA… Drug      DPD           Branded Drug Co…\n 9   44574224 AVOBENZONE 2.5% / OCTINO… Drug      DPD           Branded Drug Co…\n10   44658399 OCTINOXATE / OXYBENZONE … Drug      DPD           Clinical Drug F…\n# ℹ more rows\n# ℹ 5 more variables: standard_concept &lt;chr&gt;, concept_code &lt;chr&gt;,\n#   valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;, invalid_reason &lt;chr&gt;"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#amoxicillin-1",
-    "href": "Presentations/DrugCohorts/index.html#amoxicillin-1",
+    "objectID": "Presentations/DrugCohorts/slides.html#amoxicillin-1",
+    "href": "Presentations/DrugCohorts/slides.html#amoxicillin-1",
     "title": "Building drug cohorts in R",
     "section": "Amoxicillin",
     "text": "Amoxicillin\nWe can use getDrugIngredientCodes() to find an ingredient and all its descendants\n\namoxicillin &lt;- getDrugIngredientCodes(cdm = cdm,\n                       name = c(\"amoxicillin\"), \n                       nameStyle = \"{concept_name}\")\namoxicillin\n\n\n- amoxicillin (13407 codes)\n\n\n\nWe can use asCodelistWithDetails() to add concept names etc\n\namoxicillin |&gt; \n  asCodelistWithDetails(cdm) |&gt;\n  pluck(\"amoxicillin\") |&gt; \n  glimpse()\n\nRows: 13,407\nColumns: 5\n$ concept_id       &lt;int&gt; 586972, 587117, 587894, 588070, 589600, 589672, 58980…\n$ concept_name     &lt;chr&gt; \"Amoxicillin 775 MG [Amoxicillin Aristo]\", \"Amoxicill…\n$ domain_id        &lt;chr&gt; \"Drug\", \"Drug\", \"Drug\", \"Drug\", \"Drug\", \"Drug\", \"Drug…\n$ vocabulary_id    &lt;chr&gt; \"RxNorm Extension\", \"RxNorm Extension\", \"RxNorm Exten…\n$ standard_concept &lt;chr&gt; \"standard\", \"standard\", \"standard\", \"standard\", \"stan…"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#amoxicillin-oral-route-1",
-    "href": "Presentations/DrugCohorts/index.html#amoxicillin-oral-route-1",
+    "objectID": "Presentations/DrugCohorts/slides.html#amoxicillin-oral-route-1",
+    "href": "Presentations/DrugCohorts/slides.html#amoxicillin-oral-route-1",
     "title": "Building drug cohorts in R",
     "section": "Amoxicillin oral route",
     "text": "Amoxicillin oral route\nRather than including all amoxicillin concepts, we might want to restrict to only those of a certain route\n\namoxicillin_oral &lt;- getDrugIngredientCodes(cdm = cdm,\n                        name = c(\"amoxicillin\"), \n                        nameStyle = \"{concept_name}\", \n                        routeCategory = \"oral\") |&gt; \n  setNames(\"amoxicillin_oral\")\namoxicillin_oral\n\n\n- amoxicillin_oral (12067 codes)\n\n\nWe can also use subsetOnRouteCategory() for this\n\namoxicillin |&gt; \n  subsetOnRouteCategory(cdm, routeCategory = \"oral\")\n\n\n- amoxicillin (12067 codes)"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#excluding-routes",
-    "href": "Presentations/DrugCohorts/index.html#excluding-routes",
+    "objectID": "Presentations/DrugCohorts/slides.html#excluding-routes",
+    "href": "Presentations/DrugCohorts/slides.html#excluding-routes",
     "title": "Building drug cohorts in R",
     "section": "Excluding routes",
     "text": "Excluding routes\nNote, sometimes we might want to exclude a certain route but keep unknown routes etc.\n\namoxicillin |&gt; \n  subsetOnRouteCategory(cdm, routeCategory = \"injectable\", negate = TRUE)\n\n\n- amoxicillin (12176 codes)"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#stratifying-by-route",
-    "href": "Presentations/DrugCohorts/index.html#stratifying-by-route",
+    "objectID": "Presentations/DrugCohorts/slides.html#stratifying-by-route",
+    "href": "Presentations/DrugCohorts/slides.html#stratifying-by-route",
     "title": "Building drug cohorts in R",
     "section": "Stratifying by route",
     "text": "Stratifying by route\nRather than subsetting, we might instead want to stratify by route.\n\namoxicillin |&gt; \n  stratifyByRouteCategory(cdm)\n\n\n- amoxicillin_injectable (1231 codes)\n- amoxicillin_oral (12067 codes)\n- amoxicillin_unclassified_route_category (109 codes)\n\n\n\nWe can also keep our overall category\n\namoxicillin |&gt; \n  stratifyByRouteCategory(cdm, keepOriginal = TRUE)\n\n\n- amoxicillin (13407 codes)\n- amoxicillin_injectable (1231 codes)\n- amoxicillin_oral (12067 codes)\n- amoxicillin_unclassified_route_category (109 codes)"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#other-stratifications",
-    "href": "Presentations/DrugCohorts/index.html#other-stratifications",
+    "objectID": "Presentations/DrugCohorts/slides.html#other-stratifications",
+    "href": "Presentations/DrugCohorts/slides.html#other-stratifications",
     "title": "Building drug cohorts in R",
     "section": "Other stratifications",
     "text": "Other stratifications\nBy dose form:\n\namoxicillin |&gt; \n  stratifyByDoseForm(cdm)\n\n\n- amoxicillin_chewable_tablet (77 codes)\n- amoxicillin_delayed_release_oral_capsule (5 codes)\n- amoxicillin_delayed_release_oral_tablet (169 codes)\n- amoxicillin_disintegrating_oral_tablet (391 codes)\n- amoxicillin_effervescent_oral_tablet (24 codes)\n- amoxicillin_extended_release_oral_capsule (10 codes)\nalong with 16 more codelists\n\n\n\nBy dose unit:\n\namoxicillin |&gt; \n  stratifyByDoseUnit(cdm)\n\n\n- amoxicillin_milligram (13331 codes)\n- amoxicillin_unclassified_dose_unit (76 codes)\n- amoxicillin_unit (6 codes)"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#amoxicillin-clavulanate-oral-route",
-    "href": "Presentations/DrugCohorts/index.html#amoxicillin-clavulanate-oral-route",
+    "objectID": "Presentations/DrugCohorts/slides.html#amoxicillin-clavulanate-oral-route",
+    "href": "Presentations/DrugCohorts/slides.html#amoxicillin-clavulanate-oral-route",
     "title": "Building drug cohorts in R",
     "section": "Amoxicillin + clavulanate oral route",
     "text": "Amoxicillin + clavulanate oral route\nFirst get the codes for each (two independent codelists)\n\namoxicillin_clavulanate_oral &lt;- getDrugIngredientCodes(cdm, \n                       c(\"amoxicillin\", \"clavulanate\"), \n                       routeCategory = \"oral\")\namoxicillin_clavulanate_oral\n\n\n- 48203_clavulanate (5484 codes)\n- 723_amoxicillin (12067 codes)\n\n\n\nWe can then keep only the codes that appear in both\n\namoxicillin_clavulanate_oral &lt;- amoxicillin_clavulanate_oral |&gt; \n  intersectCodelists() |&gt; \n  setNames(\"amoxicillin_with_clavulanate\")\namoxicillin_clavulanate_oral\n\n\n- amoxicillin_with_clavulanate (5248 codes)"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#bind-codelists",
-    "href": "Presentations/DrugCohorts/index.html#bind-codelists",
+    "objectID": "Presentations/DrugCohorts/slides.html#bind-codelists",
+    "href": "Presentations/DrugCohorts/slides.html#bind-codelists",
     "title": "Building drug cohorts in R",
     "section": "Bind codelists",
     "text": "Bind codelists\nWe can combine them into a single object using bind\n\namoxicillin_codes &lt;- bind(amoxicillin, \n                          amoxicillin_oral, \n                          amoxicillin_clavulanate_oral)\namoxicillin_codes\n\n\n- amoxicillin (13407 codes)\n- amoxicillin_oral (12067 codes)\n- amoxicillin_with_clavulanate (5248 codes)"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#amoxicillin-cohorts",
-    "href": "Presentations/DrugCohorts/index.html#amoxicillin-cohorts",
+    "objectID": "Presentations/DrugCohorts/slides.html#amoxicillin-cohorts",
+    "href": "Presentations/DrugCohorts/slides.html#amoxicillin-cohorts",
     "title": "Building drug cohorts in R",
     "section": "Amoxicillin cohorts",
     "text": "Amoxicillin cohorts\n→ Create the base cohorts\nWe first create a base cohort from drug exposure records corresponding to our codelists\n\ncdm$amoxicillin &lt;- conceptCohort(\n  cdm = cdm,\n  conceptSet = amoxicillin_codes,\n  name = \"amoxicillin\"\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDatabase name\n\n\n\n\n\ndelphi-100k\n\n\n\nCohort name\nCodelist name\nStandard concept name\nStandard concept ID\nSource concept name\nSource concept ID\nSource concept value\nType concept id\nType concept name\nDomain ID\nTable\n\nEstimate name\n\n\n\nPerson count\nRecord count\n\n\n\n\namoxicillin\namoxicillin\noverall\n–\n–\n–\n–\n–\n–\n–\n–\n1,321\n5,158\n\n\n\n\namoxicillin\n1713332\nNo matching concept\n0\n5456933352\n38000230\nOutpatient header - 1st position\ndrug\ndrug_exposure\n273\n333\n\n\n\n\n\n\n\n\n5456933351\n38000230\nOutpatient header - 1st position\ndrug\ndrug_exposure\n335\n443\n\n\n\n\n\n\n\n\n5456933350\n38000177\nPrescription written\ndrug\ndrug_exposure\n375\n619\n\n\n\n\n\n\n\n\n\n38000230\nOutpatient header - 1st position\ndrug\ndrug_exposure\n375\n619\n\n\n\n\n\n\n\n\n5456933351\n38000177\nPrescription written\ndrug\ndrug_exposure\n507\n756\n\n\n\n\n\n\n\n\n5456933352\n38000177\nPrescription written\ndrug\ndrug_exposure\n558\n970\n\n\n\n\namoxicillin / clavulanate Oral Tablet\n40105046\nNo matching concept\n0\n6808423501\n38000230\nOutpatient header - 1st position\ndrug\ndrug_exposure\n180\n202\n\n\n\n\n\n\n\n\n\n38000177\nPrescription written\ndrug\ndrug_exposure\n443\n598\n\n\n\n\namoxicillin 875 MG / clavulanate 125 MG Oral Tablet\n19115197\namoxicillin 875 MG / clavulanate 125 MG Oral Tablet\n45258007\n5295970710\n38000230\nOutpatient header - 1st position\ndrug\ndrug_exposure\n114\n145\n\n\n\n\n\n\n\n\n\n38000177\nPrescription written\ndrug\ndrug_exposure\n205\n473\n\n\namoxicillin_oral\namoxicillin_oral\noverall\n–\n–\n–\n–\n–\n–\n–\n–\n645\n1,418\n\n\n\n\namoxicillin / clavulanate Oral Tablet\n40105046\nNo matching concept\n0\n6808423501\n38000230\nOutpatient header - 1st position\ndrug\ndrug_exposure\n180\n202\n\n\n\n\n\n\n\n\n\n38000177\nPrescription written\ndrug\ndrug_exposure\n443\n598\n\n\n\n\namoxicillin 875 MG / clavulanate 125 MG Oral Tablet\n19115197\namoxicillin 875 MG / clavulanate 125 MG Oral Tablet\n45258007\n5295970710\n38000230\nOutpatient header - 1st position\ndrug\ndrug_exposure\n114\n145\n\n\n\n\n\n\n\n\n\n38000177\nPrescription written\ndrug\ndrug_exposure\n205\n473\n\n\namoxicillin_with_clavulanate\namoxicillin_with_clavulanate\noverall\n–\n–\n–\n–\n–\n–\n–\n–\n645\n1,418\n\n\n\n\namoxicillin / clavulanate Oral Tablet\n40105046\nNo matching concept\n0\n6808423501\n38000230\nOutpatient header - 1st position\ndrug\ndrug_exposure\n180\n202\n\n\n\n\n\n\n\n\n\n38000177\nPrescription written\ndrug\ndrug_exposure\n443\n598\n\n\n\n\namoxicillin 875 MG / clavulanate 125 MG Oral Tablet\n19115197\namoxicillin 875 MG / clavulanate 125 MG Oral Tablet\n45258007\n5295970710\n38000230\nOutpatient header - 1st position\ndrug\ndrug_exposure\n114\n145\n\n\n\n\n\n\n\n\n\n38000177\nPrescription written\ndrug\ndrug_exposure\n205\n473\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\ndelphi-100k; amoxicillin\n\n\nInitial qualifying events\n5,158\n1,321\n0\n0\n\n\nRecord in observation\n5,158\n1,321\n0\n0\n\n\nNot missing record date\n5,158\n1,321\n0\n0\n\n\nMerge overlapping records\n5,158\n1,321\n0\n0\n\n\ndelphi-100k; amoxicillin_oral\n\n\nInitial qualifying events\n1,418\n645\n0\n0\n\n\nRecord in observation\n1,418\n645\n0\n0\n\n\nNot missing record date\n1,418\n645\n0\n0\n\n\nMerge overlapping records\n1,418\n645\n0\n0\n\n\ndelphi-100k; amoxicillin_with_clavulanate\n\n\nInitial qualifying events\n1,418\n645\n0\n0\n\n\nRecord in observation\n1,418\n645\n0\n0\n\n\nNot missing record date\n1,418\n645\n0\n0\n\n\nMerge overlapping records\n1,418\n645\n0\n0\n\n\n\n\n\n\n\n\n→ Create treatment episodes and identify new users\nWe now combine exposures into treatment episodes and apply our new-user criteria:\n\ncdm$amoxicillin_new_users &lt;- cdm$amoxicillin |&gt;\n  # Collapse exposures separated by ≤7 days\n  collapseCohorts(\n    gap = 7,\n    name = \"amoxicillin_new_users\"\n  ) |&gt;\n # First ever exposure\n requireIsFirstEntry(name = \"amoxicillin_new_users\") |&gt; \n # Adults\n  requireAge(ageRange = c(18, 150),\n    name = \"amoxicillin_new_users\"\n  )"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#new-user-cohort-attrition",
-    "href": "Presentations/DrugCohorts/index.html#new-user-cohort-attrition",
+    "objectID": "Presentations/DrugCohorts/slides.html#new-user-cohort-attrition",
+    "href": "Presentations/DrugCohorts/slides.html#new-user-cohort-attrition",
     "title": "Building drug cohorts in R",
     "section": "New-user cohort attrition",
     "text": "New-user cohort attrition\nHow do our requirements affect the number of individuals and cohort entries?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nReason\n\nVariable name\n\n\n\nnumber_records\nnumber_subjects\nexcluded_records\nexcluded_subjects\n\n\n\n\ndelphi-100k; amoxicillin\n\n\nInitial qualifying events\n5,158\n1,321\n0\n0\n\n\nRecord in observation\n5,158\n1,321\n0\n0\n\n\nNot missing record date\n5,158\n1,321\n0\n0\n\n\nMerge overlapping records\n5,158\n1,321\n0\n0\n\n\nCollapse cohort with a gap of 7 days.\n3,419\n1,321\n1,739\n0\n\n\nRestricted to first entry\n1,321\n1,321\n2,098\n0\n\n\nAge requirement: 18 to 150\n389\n389\n932\n932\n\n\ndelphi-100k; amoxicillin_oral\n\n\nInitial qualifying events\n1,418\n645\n0\n0\n\n\nRecord in observation\n1,418\n645\n0\n0\n\n\nNot missing record date\n1,418\n645\n0\n0\n\n\nMerge overlapping records\n1,418\n645\n0\n0\n\n\nCollapse cohort with a gap of 7 days.\n1,071\n645\n347\n0\n\n\nRestricted to first entry\n645\n645\n426\n0\n\n\nAge requirement: 18 to 150\n332\n332\n313\n313\n\n\ndelphi-100k; amoxicillin_with_clavulanate\n\n\nInitial qualifying events\n1,418\n645\n0\n0\n\n\nRecord in observation\n1,418\n645\n0\n0\n\n\nNot missing record date\n1,418\n645\n0\n0\n\n\nMerge overlapping records\n1,418\n645\n0\n0\n\n\nCollapse cohort with a gap of 7 days.\n1,071\n645\n347\n0\n\n\nRestricted to first entry\n645\n645\n426\n0\n\n\nAge requirement: 18 to 150\n332\n332\n313\n313"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#run-phenotyper-diagnostics",
-    "href": "Presentations/DrugCohorts/index.html#run-phenotyper-diagnostics",
+    "objectID": "Presentations/DrugCohorts/slides.html#run-phenotyper-diagnostics",
+    "href": "Presentations/DrugCohorts/slides.html#run-phenotyper-diagnostics",
     "title": "Building drug cohorts in R",
     "section": "Run PhenotypeR diagnostics",
-    "text": "Run PhenotypeR diagnostics\nphenotypeDiagnostics() allows us to run all the phenotyper diagnostics checks. Drug diagnostics is not run by default, so we will likely want to switch this on\n\nresult &lt;- phenotypeDiagnostics(\n  cdm$amoxicillin_new_users,\n  databaseDiagnostics = list(),\n  codelistDiagnostics = list(drugDiagnostics = TRUE),\n  cohortDiagnostics = list(),\n  populationDiagnostics = list()\n)\n\nWe can then use shinyDiagnostics to create a shiny app to review our results\n\nshinyDiagnostics(results, here::here())"
+    "text": "Run PhenotypeR diagnostics\nphenotypeDiagnostics() allows us to run all the phenotyper diagnostics checks. Drug diagnostics is not run by default, so we will likely want to switch this on\n\nresult &lt;- phenotypeDiagnostics(\n  cdm$amoxicillin_new_users,\n  databaseDiagnostics = list(),\n  codelistDiagnostics = list(drugDiagnostics = TRUE),\n  cohortDiagnostics = list(),\n  populationDiagnostics = list()\n)\n\nWe can then use shinyDiagnostics to create a shiny app to review our results\n\nshinyDiagnostics(result, here::here())"
   },
   {
-    "objectID": "Presentations/DrugCohorts/index.html#your-turn-1",
-    "href": "Presentations/DrugCohorts/index.html#your-turn-1",
+    "objectID": "Presentations/DrugCohorts/slides.html#your-turn-1",
+    "href": "Presentations/DrugCohorts/slides.html#your-turn-1",
     "title": "Building drug cohorts in R",
     "section": "Your turn",
     "text": "Your turn\n\nCreate a cohort of new users of injectable heparin, excluding any combinations. Collapse gaps less or equal to 2 days. Require at least 365 days between treatment. Require to be adults (≥ 18 years).\nSummarise cohort code use in a table\nSummarise cohort attrition in a table\nRun phenotyper and create a shiny app with the results"
