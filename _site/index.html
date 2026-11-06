@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-10-20">
+<meta name="dcterms.date" content="2026-11-06">
 
-<title>OHDSI-US 2026 Phenotyping</title>
+<title>HDS-Training-Drug-Cohorts</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -102,9 +102,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<meta property="og:title" content="OHDSI-US 2026 Phenotyping">
+<meta property="og:title" content="HDS-Training-Drug-Cohorts">
 <meta property="og:image" content="images/ohdsi.png">
-<meta property="og:site_name" content="OHDSI-US 2026 Phenotyping">
+<meta property="og:site_name" content="HDS-Training-Drug-Cohorts">
 </head>
 
 <body>
@@ -125,7 +125,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#set-up" id="toc-set-up" class="nav-link" data-scroll-target="#set-up">Set up</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/oxford-pharmacoepi/OHDSI-US-2026-Phenotyping/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/oxford-pharmacoepi/HDS-Training-Drug-Cohorts/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -142,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 20, 2026</p>
+      <p class="date">November 6, 2026</p>
     </div>
   </div>
   
@@ -156,9 +156,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="complex-phenotyping-at-scale-with-and-without-llms-using-phenotyper" class="level1">
 <h1>Complex Phenotyping at Scale with and without LLMs Using PhenotypeR</h1>
-<div style="text-align: center;">
-<p><img src="images/ohdsi.png" width="150"> <img src="images/hds_logo.svg" width="150"> <img src="images/iqvia.svg" width="150"></p>
-</div>
 <section id="presentations" class="level2">
 <h2 class="anchored" data-anchor-id="presentations">Presentations</h2>
 <table class="caption-top table">
@@ -171,19 +168,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><strong>From Clinical Idea to OMOP Cohort</strong></td>
+<td style="text-align: left;"><strong>Drug cohorts</strong></td>
 <td style="text-align: left;">PowerPoint</td>
-<td style="text-align: left;"><a href="Presentations/ppt/OHDSI Global PhenotypeR Tutorial.pptx" download="">Download Slides</a></td>
+<td style="text-align: left;"><a href="Presentations/ppt/20261106_HDS training_drug cohort.pptx" download="">Download Slides</a></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>PhenotypeR</strong></td>
+<td style="text-align: left;"><strong>Building drug cohorts in R</strong></td>
 <td style="text-align: left;">Quarto</td>
-<td style="text-align: left;"><a href="./Presentations/PhenotypeR/index.html">View Slides</a></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><strong>LLM integration</strong></td>
-<td style="text-align: left;">Quarto</td>
-<td style="text-align: left;"><a href="./Presentations/llm_expectations/index.html">View Slides</a></td>
+<td style="text-align: left;"><a href="./Presentations/DrugCohorts/index.html">View Slides</a></td>
 </tr>
 </tbody>
 </table>
@@ -195,53 +187,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <p>If you don’t already have them, install R and RStudio. Open up RStudio where we’ll do work.</p>
 <ol start="2" type="1">
-<li>Install Ollama app</li>
-</ol>
-<p>You’ll need the Ollama app. If you don’t already have it you can download and install using one of these links.</p>
-<ul>
-<li><p><a href="https://ollama.com/download/Ollama-darwin.zip">macOS</a></p></li>
-<li><p><a href="https://ollama.com/download/OllamaSetup.exe">Windows preview</a></p></li>
-<li><p>Linux: <code>curl -fsSL https://ollama.com/install.sh | sh</code>.</p></li>
-<li><p><a href="https://hub.docker.com/r/ollama/ollama">Docker image</a>.</p></li>
-</ul>
-<ol start="3" type="1">
-<li>Use the Ollama R package to get MedGemma:4b. You’ll need 4Gb RAM free.</li>
-</ol>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("ollamar")</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ollamar)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">test_connection</span>() </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pull</span>(<span class="st">"MedGemma:4b"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">list_models</span>() <span class="co"># you should now see the MedGemma:4b model </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ol start="4" type="1">
 <li>Install R packages used throughout</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("pak")</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ollamar)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"duckdb"</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"OHDSI/PhenotypeR"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"ellmer"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"dbplyr"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"gt"</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"here"</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"listviewer"</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"rmarkdown"</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"omopgenerics"</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"omock"</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"OmopConstructor"</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"CodelistGenerator"</span>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"CohortCharacteristics"</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"CohortConstructor"</span>)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"visOmopResults"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">repos =</span> <span class="fu">c</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">duckdb =</span> <span class="st">"https://duckdb.r-universe.dev"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">CRAN =</span> <span class="st">"https://cloud.r-project.org"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>packages <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"duckdb"</span>,<span class="st">"dplyr"</span>, <span class="st">"dbplyr"</span>, <span class="st">"gt"</span>, <span class="st">"here"</span>,  </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"omopgenerics"</span>,  <span class="st">"omock"</span>, <span class="st">"CodelistGenerator"</span>, </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CohortCharacteristics"</span>, <span class="st">"CohortConstructor"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"visOmopResults"</span>, <span class="st">"PhenotypeR"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(packages, <span class="at">ask =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<ol start="5" type="1">
+<ol start="3" type="1">
 <li>Download mock data</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>omock<span class="sc">::</span><span class="fu">downloadMockDataset</span>(<span class="st">"synpuf-1k_5.4"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>omock<span class="sc">::</span><span class="fu">downloadMockDataset</span>(<span class="st">"delphi-100k"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div style="text-align: center;">
+<p><img src="images/ohdsi.png" width="150"> <img src="images/hds_logo.svg" width="150"> <img src="images/iqvia.svg" width="150"></p>
 </div>
 
 
@@ -673,12 +641,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Rendered on October 20, 2026</p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/oxford-pharmacoepi/OHDSI-US-2026-Phenotyping/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+<p>Rendered on November 6, 2026</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/oxford-pharmacoepi/HDS-Training-Drug-Cohorts/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/oxford-pharmacoepi/OHDSI-US-2026-Phenotyping">
+    <a class="nav-link" href="https://github.com/oxford-pharmacoepi/HDS-Training-Drug-Cohorts">
       <i class="bi bi-github" role="img">
 </i> 
     </a>

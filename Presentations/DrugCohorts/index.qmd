@@ -181,6 +181,8 @@ amoxicillin <- getDrugIngredientCodes(cdm = cdm,
 amoxicillin
 ```
 
+. . .
+
 We can use `asCodelistWithDetails()` to add concept names etc
 
 ```{r, message=FALSE}
@@ -227,6 +229,8 @@ amoxicillin |>
   stratifyByRouteCategory(cdm)
 ```
 
+. . .
+
 We can also keep our overall category 
 
 ```{r, message=FALSE}
@@ -241,6 +245,8 @@ By dose form:
 amoxicillin |> 
   stratifyByDoseForm(cdm)
 ```
+
+. . .
 
 By dose unit:
 ```{r, message=FALSE}
@@ -257,6 +263,8 @@ amoxicillin_clavulanate_oral <- getDrugIngredientCodes(cdm,
                        routeCategory = "oral")
 amoxicillin_clavulanate_oral
 ```
+
+. . .
 
 We can then keep only the codes that appear in both
 ```{r, message=FALSE}
@@ -291,6 +299,8 @@ cdm$amoxicillin <- conceptCohort(
   name = "amoxicillin"
 )
 ```
+
+. . .
 
 ::: fragment
 ```{r, echo=FALSE}
@@ -354,6 +364,7 @@ result <- phenotypeDiagnostics(
 )
 ```
 
+We can then use `shinyDiagnostics` to create a shiny app to review our results
 ```{r, eval=FALSE}
 shinyDiagnostics(results, here::here())
 ```
@@ -362,7 +373,7 @@ shinyDiagnostics(results, here::here())
 
 ## Your turn
 
-1. Create a cohort of new users of injectable heparin, excluding any combinations 
-2. Collapse gaps less or equal to 2 days
-3. Require at least 365 days between treatment
-4. Require to be adults (≥ 18 years)
+1. Create a cohort of new users of injectable heparin, excluding any combinations. Collapse gaps less or equal to 2 days. Require at least 365 days between treatment. Require to be adults (≥ 18 years).
+2. Summarise cohort code use in a table
+3. Summarise cohort attrition in a table
+4. Run phenotyper and create a shiny app with the results
