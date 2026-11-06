@@ -366,7 +366,7 @@ result <- phenotypeDiagnostics(
 
 We can then use `shinyDiagnostics` to create a shiny app to review our results
 ```{r, eval=FALSE}
-shinyDiagnostics(results, here::here())
+shinyDiagnostics(result, here::here())
 ```
 
 # Your turn
