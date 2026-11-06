@@ -1,4 +1,4 @@
-# Complex Phenotyping at Scale with and without LLMs Using PhenotypeR
+# HDS Training Drug Cohorts
 
 ## Presentations
 
@@ -35,6 +35,3 @@ pak::pkg_install(packages, ask = FALSE)
 omock::downloadMockDataset("delphi-100k")
 ```
 
-::: {style="text-align: center;"}
-<img src="images/ohdsi.png" width="150"/> <img src="images/hds_logo.svg" width="150"/> <img src="images/iqvia.svg" width="150"/>
-:::
