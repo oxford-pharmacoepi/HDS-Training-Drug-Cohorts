@@ -1,0 +1,455 @@
+---
+title: "Building drug cohorts in R"
+format:
+  revealjs: 
+    theme: [simple, ../../styleSS25.scss]
+    incremental: true   
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    margin: 0.07
+    code-link: true
+    code-line-numbers: false
+    height: 900
+    width: 1600
+    footer: |
+      <div style="position: relative; width: 100%;">
+        <div style="text-align: center; font-weight: 500;">HDS-Training-Drug-Cohorts</div>
+        <div style="position: fixed; top: 20px; right: 20px;"><a href="../../index.qmd" style="text-decoration: none;">⬅ Back to Presentations</a></div>
+      </div>
+execute:
+  echo: true
+  eval: true
+  freeze: true
+editor: visual
+---
+
+```{r, echo=FALSE, message=FALSE}
+options(timeout = 3600) 
+```
+
+
+
+## Introduction
+
+<br>
+
+Creating cohorts from scratch using R. Workflow overview:
+
+<br>
+
+::::::::::: columns
+:::: {.column .fragment width="25%"}
+### 1. Drug codelists
+
+Creating codelists
+
+::: text-center
+**↓**
+
+[`CodelistGenerator`](https://github.com/darwin-eu/CodelistGenerator)
+:::
+::::
+
+::: {.column .fragment .arrow-column width="6%"}
+<br> **→**
+:::
+
+:::: {.column .fragment width="25%"}
+### 2. Drug cohorts
+
+Codelists + cohort logic
+
+::: text-center
+**↓**
+
+[`CohortConstructor`](https://github.com/OHDSI/CohortConstructor)
+:::
+::::
+
+::: {.column .fragment .arrow-column width="6%"}
+<br> **→**
+:::
+
+:::: {.column .fragment width="37%"}
+### 3. Diagnostics
+
+Reviewing codelists and cohorts
+
+::: text-center
+**↓**
+
+[`PhenotypeR`](https://github.com/OHDSI/PhenotypeR)
+:::
+::::
+:::::::::::
+
+
+## What cohorts are we going to create?
+
+<br>
+
+:::::: {.columns}
+
+::: {.column .fragment width="26%"}
+### Amoxicillin
+
+1. Drug ingredient of amoxicillin and descendants
+2. Collapse gaps less or equal to a week
+3. First ever exposure
+4. Require to be adults (≥ 18 years)
+:::
+
+::: {.column width="6%"}
+:::
+
+::: {.column .fragment width="26%"}
+### Amoxicillin oral route
+
+1. Drug ingredient of amoxicillin and descendants but only with oral route
+2. Collapse gaps less or equal to a week
+3. First ever exposure
+4. Require to be adults (≥ 18 years)
+:::
+
+::: {.column width="6%"}
+:::
+
+::: {.column .fragment width="29%"}
+### Amoxicillin + clavulanate combination oral route
+
+1. Drug ingredient of amoxicillin and descendants but only with oral route
+2. Collapse gaps less or equal to a week
+3. First ever exposure
+4. Require to be adults (≥ 18 years)
+:::
+
+::::::
+
+# Step 1: Creating codelists
+
+## Create CDM reference
+
+1)  Load relevant packages
+
+. . .
+
+
+
+```{r, message=FALSE}
+library(omopgenerics)
+library(omock)
+library(CodelistGenerator)
+library(CohortConstructor)
+library(CohortCharacteristics)
+library(PhenotypeR)
+library(here)
+library(duckdb)
+library(visOmopResults)
+library(gt)
+library(purrr)
+library(dplyr)
+```
+
+
+
+2)  Create a cdm reference to a synthetic omop database
+
+. . .
+
+
+
+```{r, message=FALSE}
+cdm <- omock::mockCdmFromDataset("delphi-100k",
+                                 source = "duckdb")
+```
+
+
+
+## Create CDM reference
+
+<br>
+
+The `cdm` object provides a reference to the tables in our data source.
+
+We can access individual tables using `$`. For example, to access the OMOP `concept` table:
+
+
+
+```{r, message=TRUE}
+cdm$concept
+```
+
+
+
+# Step 1: Codelists
+
+## Amoxicillin
+
+We can use `getDrugIngredientCodes()` to find an ingredient and all its descendants
+
+
+
+```{r, message=FALSE}
+amoxicillin <- getDrugIngredientCodes(cdm = cdm,
+                       name = c("amoxicillin"), 
+                       nameStyle = "{concept_name}")
+amoxicillin
+```
+
+
+
+We can use `asCodelistWithDetails()` to add concept names etc
+
+
+
+```{r, message=FALSE}
+amoxicillin |> 
+  asCodelistWithDetails(cdm) |>
+  pluck("amoxicillin") |> 
+  glimpse()
+```
+
+
+
+## Amoxicillin oral route
+
+Rather than including all amoxicillin concepts, we might want to restrict to only those of a certain route
+
+
+
+```{r, message=FALSE}
+amoxicillin_oral <- getDrugIngredientCodes(cdm = cdm,
+                        name = c("amoxicillin"), 
+                        nameStyle = "{concept_name}", 
+                        routeCategory = "oral") |> 
+  setNames("amoxicillin_oral")
+amoxicillin_oral
+```
+
+
+
+We can also use `subsetOnRouteCategory()` for this
+
+
+```{r, message=FALSE}
+amoxicillin |> 
+  subsetOnRouteCategory(cdm, routeCategory = "oral")
+```
+
+
+
+## Excluding routes
+
+Note, sometimes we might want to exclude a certain route but keep unknown routes etc.
+
+
+
+```{r, message=FALSE}
+amoxicillin |> 
+  subsetOnRouteCategory(cdm, routeCategory = "injectable", negate = TRUE)
+```
+
+
+
+## Stratifying by route
+
+Rather than subsetting, we might instead want to stratify by route.
+
+
+
+```{r, message=FALSE}
+amoxicillin |> 
+  stratifyByRouteCategory(cdm)
+```
+
+
+
+We can also keep our overall category 
+
+
+
+```{r, message=FALSE}
+amoxicillin |> 
+  stratifyByRouteCategory(cdm, keepOriginal = TRUE)
+```
+
+
+
+## Other stratifications
+
+By dose form:
+
+
+```{r, message=FALSE}
+amoxicillin |> 
+  stratifyByDoseForm(cdm)
+```
+
+
+
+By dose unit:
+
+
+```{r, message=FALSE}
+amoxicillin |> 
+  stratifyByDoseUnit(cdm)
+```
+
+
+
+## Amoxicillin + clavulanate oral route
+
+First get the codes for each (two independent codelists)
+
+
+```{r, message=FALSE}
+amoxicillin_clavulanate_oral <- getDrugIngredientCodes(cdm, 
+                       c("amoxicillin", "clavulanate"), 
+                       routeCategory = "oral")
+amoxicillin_clavulanate_oral
+```
+
+
+
+We can then keep only the codes that appear in both
+
+
+```{r, message=FALSE}
+amoxicillin_clavulanate_oral <- amoxicillin_clavulanate_oral |> 
+  intersectCodelists() |> 
+  setNames("amoxicillin_with_clavulanate")
+amoxicillin_clavulanate_oral
+```
+
+
+
+## Bind codelists
+We can combine them into a single object using `bind`
+
+
+```{r, message=FALSE}
+amoxicillin_codes <- bind(amoxicillin, 
+                          amoxicillin_oral, 
+                          amoxicillin_clavulanate_oral)
+amoxicillin_codes
+```
+
+
+
+
+# Step 2: Cohort construction
+
+## Amoxicillin cohorts
+
+### → Create the base cohorts
+
+We first create a base cohort from drug exposure records corresponding to our codelists
+
+
+
+```{r}
+cdm$amoxicillin <- conceptCohort(
+  cdm = cdm,
+  conceptSet = amoxicillin_codes,
+  name = "amoxicillin"
+)
+```
+
+
+
+::: fragment
+
+
+```{r, echo=FALSE}
+CodelistGenerator::summariseCohortCodeUse(
+  cdm, "amoxicillin"
+) |>
+  CodelistGenerator::tableCohortCodeUse()
+```
+
+
+:::
+
+::: fragment
+
+
+```{r, echo=FALSE}
+CohortCharacteristics::summariseCohortAttrition(
+  cdm$amoxicillin
+) |>
+  CohortCharacteristics::tableCohortAttrition()
+```
+
+
+:::
+
+### → Create treatment episodes and identify new users
+
+We now combine exposures into treatment episodes and apply our new-user criteria:
+
+
+
+```{r}
+cdm$amoxicillin_new_users <- cdm$amoxicillin |>
+  # Collapse exposures separated by ≤7 days
+  collapseCohorts(
+    gap = 7,
+    name = "amoxicillin_new_users"
+  ) |>
+ # First ever exposure
+ requireIsFirstEntry(name = "amoxicillin_new_users") |> 
+ # Adults
+  requireAge(ageRange = c(18, 150),
+    name = "amoxicillin_new_users"
+  )
+```
+
+
+
+## New-user cohort attrition
+
+How do our requirements affect the number of individuals and cohort entries?
+
+
+
+```{r, echo=FALSE}
+CohortCharacteristics::summariseCohortAttrition(cdm$amoxicillin_new_users) |>
+  CohortCharacteristics::tableCohortAttrition()
+```
+
+
+
+# Step 3: Reviewing cohorts
+
+## Run PhenotypeR diagnostics
+
+`phenotypeDiagnostics()` allows us to run all the phenotyper diagnostics checks. Drug diagnostics is not run by default, so we will likely want to switch this on
+
+
+
+```{r, eval=FALSE}
+result <- phenotypeDiagnostics(
+  cdm$amoxicillin_new_users,
+  databaseDiagnostics = list(),
+  codelistDiagnostics = list(drugDiagnostics = TRUE),
+  cohortDiagnostics = list(),
+  populationDiagnostics = list()
+)
+```
+
+```{r, eval=FALSE}
+shinyDiagnostics(results, here::here())
+```
+
+
+
+# Your turn
+
+## Your turn
+
+1. Create a cohort of new users of injectable heparin, excluding any combinations 
+2. Collapse gaps less or equal to 2 days
+3. Require at least 365 days between treatment
+4. Require to be adults (≥ 18 years)
+

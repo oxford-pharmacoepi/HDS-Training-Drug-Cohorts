@@ -1,0 +1,40 @@
+# Complex Phenotyping at Scale with and without LLMs Using PhenotypeR
+
+## Presentations
+
+| Presentation | Format | Link |
+| :--- | :--- | :--- |
+| **Drug cohorts** | PowerPoint | [Download Slides](Presentations/ppt/20261106_HDS training_drug cohort.pptx){download=""} |
+| **Building drug cohorts in R** | Quarto | [View Slides](Presentations/DrugCohorts/index.qmd) |
+
+## Set up
+
+1)  R and RStudio
+
+If you don't already have them, install R and RStudio. Open up RStudio where we'll do work.
+
+2)  Install R packages used throughout
+
+```{r, eval=FALSE}
+options(repos = c(
+  duckdb = "https://duckdb.r-universe.dev",
+  CRAN = "https://cloud.r-project.org"
+))
+packages <- c(
+  "duckdb","dplyr", "dbplyr", "gt", "here",  
+  "omopgenerics",  "omock", "CodelistGenerator", 
+  "CohortCharacteristics", "CohortConstructor",
+  "visOmopResults", "PhenotypeR"
+)
+pak::pkg_install(packages, ask = FALSE)
+```
+
+3)  Download mock data
+
+```{r, eval=FALSE}
+omock::downloadMockDataset("delphi-100k")
+```
+
+::: {style="text-align: center;"}
+<img src="images/ohdsi.png" width="150"/> <img src="images/hds_logo.svg" width="150"/> <img src="images/iqvia.svg" width="150"/>
+:::
