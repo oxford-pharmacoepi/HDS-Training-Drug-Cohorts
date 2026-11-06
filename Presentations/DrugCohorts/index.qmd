@@ -2,6 +2,7 @@
 title: "Building drug cohorts in R"
 format:
   revealjs: 
+    output-file: "slides.html"
     theme: [simple, ../../styleSS25.scss]
     incremental: true   
     slide-number: true
